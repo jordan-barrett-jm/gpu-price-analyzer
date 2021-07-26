@@ -10,8 +10,8 @@ from price_analyzer.serializers import RequestSerializer
 def api(request):
     if request.method == "POST":
         serializer = RequestSerializer(data=request.data)
+        print (serializer)
         if serializer.is_valid():
-            print (serializer)
             price_data = priceSearch(serializer.data["gpu_name"])
             print (price_data)
             return Response(price_data)
