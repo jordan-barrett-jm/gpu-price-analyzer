@@ -21,7 +21,8 @@ def priceSearch(gpu_name):
 
         for post in req_data["data"]:
             if "link_flair_text" in post:
-                if post["link_flair_text"] == "SELLING":
+                print (post)
+                if post["link_flair_text"] == "SELLING" and "[removed]" not in post["selftext"]:
                     post_data = {
                         'author': post['author'],
                         'post_title': post['title'],
