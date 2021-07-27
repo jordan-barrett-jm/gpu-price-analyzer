@@ -7,7 +7,9 @@ class App extends React.Component {
         this.state = {
             gpu_name: '',
             price_data: [],
-            price_list: []
+            price_list: [],
+            average_price : 0,
+            total_price: 0
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -19,13 +21,28 @@ class App extends React.Component {
         });
     }
     
-    handleClick(price){
+    async handleClick(price){
         console.log(price);
         var arr = this.state.price_list;
+        var avg = this.state.average_price;
+        var total = this.state.total_price;
+        var reg =  new RegExp('[-]{0,1}[\\d]*[.]{0,1}[\\d]+');
+        var gpu_price = parseFloat(price.match(reg)[0]);
+        var total = total + gpu_price;
         arr.push(price);
-        this.setState({
-            price_list: arr
+        avg = total / (arr.length); 
+        console.log(gpu_price);
+        console.log(avg);
+        console.log(arr.length)
+        await this.setState({
+            price_list: arr,
+            average_price: avg,
+            total_price: total
         });
+        console.log(this.state.price_list.length);
+        console.log(this.state.average_price);
+        
+        
     }
     
     renderParagraph(text){
@@ -45,7 +62,11 @@ class App extends React.Component {
         {"gpu_name": this.state.gpu_name}).then(res=> {
             console.log(res.data);
             this.setState({
-                price_data: res.data
+                price_data: res.data,
+                price_list: [],
+                average_price: 0,
+                total_price: 0
+                
             });
         })
     }
@@ -81,11 +102,7 @@ class App extends React.Component {
              
              {this.state.price_list.length > 0 ? 
                 <div>
-                    <ul>
-                    {this.state.price_list.map( price => (
-                        <li>{price}</li>
-                    ) )}
-                    </ul>
+                    <p>Average price for a {this.state.gpu_name} is {this.state.average_price}</p>
                 </div>
              
              : <div>Price list empty</div>}
