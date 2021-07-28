@@ -26,8 +26,8 @@ class App extends React.Component {
         var arr = this.state.price_list;
         var avg = this.state.average_price;
         var total = this.state.total_price;
-        var reg =  new RegExp('[-]{0,1}[\\d]*[.]{0,1}[\\d]+');
-        var gpu_price = parseFloat(price.match(reg)[0]);
+        var reg =  new RegExp('(\\d+([,\.]\\d+)?k?)');
+        var gpu_price = parseFloat(price.match(reg)[0].replace(",",""));
         var total = total + gpu_price;
         arr.push(price);
         avg = total / (arr.length); 
