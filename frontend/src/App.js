@@ -13,7 +13,8 @@ class App extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleClick = this.handleClick.bind(this);
+        this.calcAvg = this.calcAvg.bind(this);
+        this.renderParagraph = this.renderParagraph.bind(this);
     }
     handleChange(event){
         this.setState({
@@ -21,7 +22,7 @@ class App extends React.Component {
         });
     }
     
-    async handleClick(price){
+    async calcAvg(price){
         console.log(price);
         var arr = this.state.price_list;
         var avg = this.state.average_price;
@@ -47,9 +48,13 @@ class App extends React.Component {
     
     renderParagraph(text){
         var reg =  new RegExp('\\$[-0-9.,]+[-0-9.,a-zA-Z]*\\b');
+        var price_arr = [];
+        var total = 0;
+        var avg = 0;
         var arr = text.split(" ").map((word) => {
-        return reg.test(word) === true ? <span onClick={() => this.handleClick(word)}><mark>{word}</mark> </span>
-        : <span>{word} </span>
+            var price_check = reg.test(word);
+            return price_check ? <span><mark>{word}</mark> </span>
+            : <span>{word} </span>
         });
         return arr;
     }
@@ -61,11 +66,23 @@ class App extends React.Component {
         await axios.post("http://127.0.0.1:9000/api", 
         {"gpu_name": this.state.gpu_name}).then(res=> {
             console.log(res.data);
+            var reg =  new RegExp('\\$[-0-9.,]+[-0-9.,a-zA-Z]*\\b');
+            var reg2 =  new RegExp('(\\d+([,\.]\\d+)?k?)');
+            var price_arr = [];
+            var total = 0;
+            var avg = 0;
+            res.data.forEach((p_data) => {
+                var gpu_price = p_data.post_body.match(reg)[0];
+                var gpu_price = parseFloat(gpu_price.match(reg2)[0].replace(",",""));
+                console.log(gpu_price);
+                total = total + gpu_price;
+                price_arr.push(gpu_price);
+                avg = total / (price_arr.length); 
+            })
             this.setState({
                 price_data: res.data,
-                price_list: [],
-                average_price: 0,
-                total_price: 0
+                price_list: price_arr,
+                average_price: avg
                 
             });
         })
