@@ -9,7 +9,8 @@ class App extends React.Component {
             price_data: [],
             price_list: [],
             average_price : 0,
-            total_price: 0
+            total_price: 0,
+            loading: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -61,6 +62,9 @@ class App extends React.Component {
 
     
     async handleSubmit(event){
+        this.setState({
+            loading: true
+        });
         console.log(this.state.gpu_name);
         event.preventDefault();
         await axios.post("http://127.0.0.1:9000/api", 
@@ -82,7 +86,8 @@ class App extends React.Component {
             this.setState({
                 price_data: res.data,
                 price_list: price_arr,
-                average_price: avg
+                average_price: avg,
+                loading: false
                 
             });
         })
@@ -95,7 +100,7 @@ class App extends React.Component {
                 <input type="text" value={this.state.gpu_name} onChange={this.handleChange}/>
                 <input type="submit" value="Submit"/>
             </form>
-            {this.state.price_data.length > 0 ? 
+            {this.state.price_data.length > 0 && !this.state.loading? 
                 <div>
                     <table>
                         <thead>
@@ -115,14 +120,16 @@ class App extends React.Component {
                         
                     </table>
                 </div>
-             : <div>Price data not found</div> }
-             
-             {this.state.price_list.length > 0 ? 
+             : "" }
+             {this.state.loading ?
+                <p>loading</p>
+             : ""}
+             {this.state.price_list.length > 0 && !this.state.loading? 
                 <div>
-                    <p>Average price for a {this.state.gpu_name} is {this.state.average_price}</p>
+                    <p>Average price for a {this.state.gpu_name} is ${this.state.average_price}</p>
                 </div>
              
-             : <div>Price list empty</div>}
+             : ""}
             </div>
         );
   }
