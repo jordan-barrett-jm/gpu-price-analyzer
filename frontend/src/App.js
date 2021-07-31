@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import 'semantic-ui-css/semantic.min.css';
+import { Message, Grid, Table, Form, Dimmer, Loader, Container, Header } from 'semantic-ui-react';
 
 class App extends React.Component {
     constructor(props){
@@ -8,7 +10,8 @@ class App extends React.Component {
             gpu_name: '',
             price_data: [],
             average_price : 0,
-            loading: false
+            loading: false,
+            error: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,7 +40,8 @@ class App extends React.Component {
     
     async handleSubmit(event){
         this.setState({
-            loading: true
+            loading: true,
+            error: false
         });
         console.log(this.state.gpu_name);
         event.preventDefault();
@@ -66,40 +70,61 @@ class App extends React.Component {
                 loading: false
                 
             });
-        })
+        }).catch(error => {
+            this.setState({
+                error: true,
+                loading: false
+            });
+        });
     }
     render(){
         return (
-            <div>
-            <form onSubmit={this.handleSubmit}>
-                <label>GPU Name: </label>
-                <input type="text" value={this.state.gpu_name} onChange={this.handleChange}/>
-                <input type="submit" value="Submit"/>
-            </form>
-            {this.state.price_data.length > 0 && !this.state.loading? 
-                <div>
-                    <table>
-                        <thead>
-                            <th>Price</th>
-                            <th>Link</th>
-                        </thead>
-                        <tbody>
-                        {this.state.price_data.map((post) => (
-                            <tr>
-                                <td>${post.price}</td>
-                                <td><a href={post.link}>Link</a></td>
-                            </tr>
-                        ))}
-                        </tbody>
-                        
-                    </table>
-                    <p>Average price for a {this.state.gpu_name} is ${this.state.average_price}</p>
-                </div>
-             : "" }
-             {this.state.loading ?
-                <p>loading</p>
-             : ""}
-            </div>
+            <Container textAlign='center'>
+                <Header as="h1">GPU Price Analyzer</Header>
+                <Container align="left">
+                <Form onSubmit={this.handleSubmit}>
+                    <Form.Input onChange={this.handleChange} value={this.state.gpu_name} label="GPU Name" />
+                    <Form.Button>Submit</Form.Button>
+                </Form>
+                </Container>
+                {this.state.price_data.length > 0 && !this.state.loading? 
+                        <div>
+                        <Header>Average price for a {this.state.gpu_name} is ${this.state.average_price}</Header>
+                        <Grid>
+                        <Grid.Column width={4}>
+                        <Table basic="very">
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Price</Table.HeaderCell>
+                                    <Table.HeaderCell>Link</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                            {this.state.price_data.map((post) => (
+                                <Table.Row>
+                                    <Table.Cell>${post.price}</Table.Cell>
+                                    <Table.Cell><a href={post.link}>Link</a></Table.Cell>
+                                </Table.Row>
+                            ))}
+                            </Table.Body>
+                            
+                        </Table>
+                        </Grid.Column>
+                        </Grid>
+                        </div>
+                 : "" }
+                 {this.state.error ?
+                    <Message negative>
+                        <Message.Header>GPU price data not found</Message.Header>
+                        <p>We couldn't find any price data on {this.state.gpu_name}. Please verify that you entered a valid GPU name.</p>
+                    </Message>
+                 : ""}
+                 {this.state.loading ?
+                    <Dimmer active inverted>
+                        <Loader size='medium'>Loading</Loader>
+                    </Dimmer>
+                 : ""}
+            </Container>
         );
   }
 }

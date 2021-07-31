@@ -22,7 +22,7 @@ def priceSearch(gpu_name):
         print ("-------------------------------------------------------------------------------")
         
         for post in req_data["data"]:
-            if len(price_data) < 5:
+            if len(price_data) < 5 and "selftext" in post:
                 if "link_flair_text" in post and "[removed]" not in post["selftext"] and gpu_name in post["title"] :
                     #print (post)
                     if post["link_flair_text"] == "SELLING":
