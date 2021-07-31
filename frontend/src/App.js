@@ -7,14 +7,11 @@ class App extends React.Component {
         this.state = {
             gpu_name: '',
             price_data: [],
-            price_list: [],
             average_price : 0,
-            total_price: 0,
             loading: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.calcAvg = this.calcAvg.bind(this);
         this.renderParagraph = this.renderParagraph.bind(this);
     }
     handleChange(event){
@@ -23,29 +20,6 @@ class App extends React.Component {
         });
     }
     
-    async calcAvg(price){
-        console.log(price);
-        var arr = this.state.price_list;
-        var avg = this.state.average_price;
-        var total = this.state.total_price;
-        var reg =  new RegExp('(\\d+([,\.]\\d+)?k?)');
-        var gpu_price = parseFloat(price.match(reg)[0].replace(",",""));
-        var total = total + gpu_price;
-        arr.push(price);
-        avg = total / (arr.length); 
-        console.log(gpu_price);
-        console.log(avg);
-        console.log(arr.length)
-        await this.setState({
-            price_list: arr,
-            average_price: avg,
-            total_price: total
-        });
-        console.log(this.state.price_list.length);
-        console.log(this.state.average_price);
-        
-        
-    }
     
     renderParagraph(text){
         var reg =  new RegExp('\\$[-0-9.,]+[-0-9.,a-zA-Z]*\\b');
@@ -75,6 +49,7 @@ class App extends React.Component {
             var price_arr = [];
             var total = 0;
             var avg = 0;
+            var price_data = []
             res.data.forEach((p_data) => {
                 var gpu_price = p_data.post_body.match(reg)[0];
                 var gpu_price = parseFloat(gpu_price.match(reg2)[0].replace(",",""));
@@ -82,10 +57,11 @@ class App extends React.Component {
                 total = total + gpu_price;
                 price_arr.push(gpu_price);
                 avg = total / (price_arr.length); 
+                p_data.price = gpu_price;
+                price_data.push(p_data);
             })
             this.setState({
-                price_data: res.data,
-                price_list: price_arr,
+                price_data: price_data,
                 average_price: avg,
                 loading: false
                 
@@ -104,31 +80,24 @@ class App extends React.Component {
                 <div>
                     <table>
                         <thead>
-                            <th>Post Title</th>
-                            <th>Post Body</th>
-                            <th>Post Link</th>
+                            <th>Price</th>
+                            <th>Link</th>
                         </thead>
                         <tbody>
                         {this.state.price_data.map((post) => (
                             <tr>
-                                <td>{post.post_title}</td>
-                                <td>{this.renderParagraph(post.post_body)}</td>
-                                <td>{post.link}</td>
+                                <td>${post.price}</td>
+                                <td><a href={post.link}>Link</a></td>
                             </tr>
                         ))}
                         </tbody>
                         
                     </table>
+                    <p>Average price for a {this.state.gpu_name} is ${this.state.average_price}</p>
                 </div>
              : "" }
              {this.state.loading ?
                 <p>loading</p>
-             : ""}
-             {this.state.price_list.length > 0 && !this.state.loading? 
-                <div>
-                    <p>Average price for a {this.state.gpu_name} is ${this.state.average_price}</p>
-                </div>
-             
              : ""}
             </div>
         );
