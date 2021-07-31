@@ -5,8 +5,8 @@ Well, now you can keep track of the pricing without sorting through listings fro
 
 
 # Technologies
-Backend: Django, Django REST Framework
-Frontend: React, Semantic UI
+* Backend: Django, Django REST Framework
+* Frontend: React, Semantic UI
 
 # Demo
 
