@@ -7,11 +7,12 @@ class App extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            gpu_name: '',
+            search_name: '',
             price_data: [],
             average_price : 0,
             loading: false,
-            error: false
+            error: false,
+            gpu_name: ''
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -19,7 +20,7 @@ class App extends React.Component {
     }
     handleChange(event){
         this.setState({
-           gpu_name: event.target.value 
+           search_name: event.target.value 
         });
     }
     
@@ -43,10 +44,10 @@ class App extends React.Component {
             loading: true,
             error: false
         });
-        console.log(this.state.gpu_name);
+        console.log(this.state.search_name);
         event.preventDefault();
         await axios.post("http://127.0.0.1:9000/api", 
-        {"gpu_name": this.state.gpu_name}).then(res=> {
+        {"gpu_name": this.state.search_name}).then(res=> {
             console.log(res.data);
             var reg =  new RegExp('\\$[-0-9.,]+[-0-9.,a-zA-Z]*\\b');
             var reg2 =  new RegExp('(\\d+([,\.]\\d+)?k?)');
@@ -67,13 +68,16 @@ class App extends React.Component {
             this.setState({
                 price_data: price_data,
                 average_price: avg,
-                loading: false
+                loading: false,
+                gpu_name: this.state.search_name
                 
             });
         }).catch(error => {
             this.setState({
                 error: true,
-                loading: false
+                loading: false,
+                gpu_name: this.state.search_name,
+                price_data: []
             });
         });
     }
@@ -83,7 +87,7 @@ class App extends React.Component {
                 <Header as="h1">GPU Price Analyzer</Header>
                 <Container align="left">
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input onChange={this.handleChange} value={this.state.gpu_name} placeholder="RTX 2060" label="Enter the GPU name" />
+                    <Form.Input onChange={this.handleChange} value={this.state.search_name} placeholder="RTX 2060" label="Enter the GPU name" />
                     <Form.Button>Analyze</Form.Button>
                 </Form>
                 </Container>
@@ -96,14 +100,14 @@ class App extends React.Component {
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>Price</Table.HeaderCell>
-                                    <Table.HeaderCell>Link</Table.HeaderCell>
+                                    <Table.HeaderCell>Listing</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
                             {this.state.price_data.map((post) => (
                                 <Table.Row>
                                     <Table.Cell>${post.price}</Table.Cell>
-                                    <Table.Cell><a href={post.link}>Link</a></Table.Cell>
+                                    <Table.Cell><a target="_blank" href={post.link}>Link</a></Table.Cell>
                                 </Table.Row>
                             ))}
                             </Table.Body>
