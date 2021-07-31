@@ -79,12 +79,12 @@ class App extends React.Component {
     }
     render(){
         return (
-            <Container textAlign='center'>
+            <Container style={{ margin: 20 }} textAlign='center'>
                 <Header as="h1">GPU Price Analyzer</Header>
                 <Container align="left">
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input onChange={this.handleChange} value={this.state.gpu_name} label="GPU Name" />
-                    <Form.Button>Submit</Form.Button>
+                    <Form.Input onChange={this.handleChange} value={this.state.gpu_name} placeholder="RTX 2060" label="Enter the GPU name" />
+                    <Form.Button>Analyze</Form.Button>
                 </Form>
                 </Container>
                 {this.state.price_data.length > 0 && !this.state.loading? 

@@ -18,12 +18,13 @@ def priceSearch(gpu_name):
             'before': last,
             'subreddit': "hardwareswap"
         }
+        print(params['title'])
         req_data = requests.get("https://api.pushshift.io/reddit/search/submission/", params=params).json()
         print ("-------------------------------------------------------------------------------")
         
         for post in req_data["data"]:
             if len(price_data) < 5 and "selftext" in post:
-                if "link_flair_text" in post and "[removed]" not in post["selftext"] and gpu_name in post["title"] :
+                if "link_flair_text" in post and "[removed]" not in post["selftext"] and (gpu_name.upper() in post["title"] or gpu_name.lower() in post["title"]) :
                     #print (post)
                     if post["link_flair_text"] == "SELLING":
                         match = re.findall(r, post['selftext'])
