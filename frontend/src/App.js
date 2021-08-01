@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import 'semantic-ui-css/semantic.min.css';
 import { Message, Grid, Table, Form, Dimmer, Loader, Container, Header } from 'semantic-ui-react';
+import Plotly from "plotly.js-basic-dist";
+import createPlotlyComponent from "react-plotly.js/factory";
 
 class App extends React.Component {
     constructor(props){
@@ -82,6 +84,11 @@ class App extends React.Component {
         });
     }
     render(){
+        const Plot = createPlotlyComponent(Plotly);
+        const prices = []
+        this.state.price_data.forEach( post => {
+            prices.push(post.price);
+        })
         return (
             <Container style={{ margin: 20 }} textAlign='center'>
                 <Header as="h1">GPU Price Analyzer</Header>
@@ -94,6 +101,17 @@ class App extends React.Component {
                 {this.state.price_data.length > 0 && !this.state.loading? 
                         <div>
                         <Header>Average price for a {this.state.gpu_name} is ${this.state.average_price}</Header>
+                        <Plot
+                            data={[
+                              {
+                                y: prices,
+                                type: 'scatter',
+                                mode: 'markers',
+                                marker: {color: 'blue'},
+                              }
+                            ]}
+                            layout={ {title: 'Price Distribution Graph'} }
+                          />
                         <Grid>
                         <Grid.Column width={4}>
                         <Table basic="very">
@@ -115,6 +133,7 @@ class App extends React.Component {
                         </Table>
                         </Grid.Column>
                         </Grid>
+                        
                         </div>
                  : "" }
                  {this.state.error ?
