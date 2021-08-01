@@ -10,5 +10,9 @@ Well, now you can keep track of the pricing without sorting through listings fro
 
 # Demo
 
-https://user-images.githubusercontent.com/37257304/127749741-4a908f01-9a3c-4936-8268-ac4e58c2bfa5.mp4
+
+
+https://user-images.githubusercontent.com/37257304/127785002-ad12c411-bb49-4e7b-bf0b-b75824093269.mp4
+
+
 
