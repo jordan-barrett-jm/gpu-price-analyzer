@@ -65,6 +65,9 @@ class App extends React.Component {
                 price_arr.push(gpu_price);
                 avg = total / (price_arr.length); 
                 p_data.price = gpu_price;
+                var utc_date = new Date(0);
+                utc_date.setUTCSeconds(p_data.created_date)
+                p_data.formatted_date = new Intl.DateTimeFormat('en-US').format(utc_date)
                 price_data.push(p_data);
             })
             this.setState({
@@ -86,8 +89,10 @@ class App extends React.Component {
     render(){
         const Plot = createPlotlyComponent(Plotly);
         const prices = []
+        const dates = []
         this.state.price_data.forEach( post => {
             prices.push(post.price);
+            dates.push(post.formatted_date);
         })
         return (
             <Container style={{ margin: 20 }} textAlign='center'>
@@ -104,7 +109,8 @@ class App extends React.Component {
                         <Plot
                             data={[
                               {
-                                y: prices,
+                                y: prices.reverse(),
+                                x: dates.reverse(),
                                 type: 'scatter',
                                 mode: 'markers',
                                 marker: {color: 'blue'},
@@ -118,6 +124,7 @@ class App extends React.Component {
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>Price</Table.HeaderCell>
+                                    <Table.HeaderCell>Date</Table.HeaderCell>
                                     <Table.HeaderCell>Listing</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
@@ -125,6 +132,7 @@ class App extends React.Component {
                             {this.state.price_data.map((post) => (
                                 <Table.Row>
                                     <Table.Cell>${post.price}</Table.Cell>
+                                    <Table.Cell>{post.formatted_date}</Table.Cell>
                                     <Table.Cell><a target="_blank" href={post.link}>Link</a></Table.Cell>
                                 </Table.Row>
                             ))}

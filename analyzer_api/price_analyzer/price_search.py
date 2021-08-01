@@ -35,7 +35,8 @@ def priceSearch(gpu_name):
                                 'author': post['author'],
                                 'post_title': post['title'],
                                 'post_body': post['selftext'],
-                                'link': post['full_link']
+                                'link': post['full_link'],
+                                'created_date': post["created_utc"]
                             }
                             price_data.append(post_data)
                 else:
