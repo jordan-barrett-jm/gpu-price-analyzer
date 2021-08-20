@@ -119,11 +119,12 @@ class App extends React.Component {
                             layout={ {title: 'Price Distribution Graph'} }
                           />
                         <Grid>
-                        <Grid.Column width={4}>
+                        <Grid.Column width={8}>
                         <Table basic="very">
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>Price</Table.HeaderCell>
+                                    <Table.HeaderCell>Title</Table.HeaderCell>
                                     <Table.HeaderCell>Date</Table.HeaderCell>
                                     <Table.HeaderCell>Listing</Table.HeaderCell>
                                 </Table.Row>
@@ -132,6 +133,7 @@ class App extends React.Component {
                             {this.state.price_data.map((post) => (
                                 <Table.Row>
                                     <Table.Cell>${post.price}</Table.Cell>
+                                    <Table.Cell>{post.post_title}</Table.Cell>
                                     <Table.Cell>{post.formatted_date}</Table.Cell>
                                     <Table.Cell><a target="_blank" href={post.link}>Link</a></Table.Cell>
                                 </Table.Row>
